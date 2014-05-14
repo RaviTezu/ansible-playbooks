@@ -1,0 +1,16 @@
+#!/usr/bin/env ansible-playbook
+---
+#copies the scripts directory to remote servers. 
+#as we are using {{ hosts }} here, you have the pass the hostnames as args to this playbook.
+#Ex: ansible-playbook copy_a_dir.yml --extra-vars "hosts=dbhost1.example.com" --ask-pass
+
+- hosts: "{{ hosts }}"
+  user: root
+  tasks:
+
+  - name: killoff the dir if exists
+    action: command rm -rf /usr/share/scripts
+
+  - name: put the directory in rightplace
+    copy: src=scripts dest=/usr/share/scripts
+
