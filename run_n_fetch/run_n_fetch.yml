@@ -1,0 +1,39 @@
+#!/usr/bin/env ansible-playbook
+---
+# ***** local configuration ***** 
+# These commands will be executed on localhost, you should have localhost group in your ansible hosts file.
+- hosts: localhost
+  connection: local 
+  user: terminator
+  tasks:
+  - name: Finding the current month
+    action: shell date '+%m'
+    register: mymonth
+  
+  - name: Make sure there's no directory with such name or nuke it
+    action: shell rm -rf /tmp/{{mymonth.stdout}}
+    
+  - name: Creating a temp. directory under /tmp
+    action: shell mkdir /tmp/{{mymonth.stdout}}
+
+
+# ***** now talk to some remote hosts ****** 
+# These commands will be executed on remote hosts, which are listed under the dbhosts group in you ansible hosts file.
+# It will create a file under /tmp with the hostsname on each host and puts some info in it. fetches them to the localhost.
+
+- hosts: dbhosts
+  user:  terminator 
+  tasks:
+
+  - name: Creating a tmp file on remote host(s)
+    shell: touch /tmp/{{ ansible_fqdn }}.txt
+
+  - name: Collecting the evidence
+    shell: date >  /tmp/{{ ansible_fqdn }}.txt; hostname >> /tmp/{{ ansible_fqdn }}.txt; cat /etc/redhat-release >> /tmp/{{ ansible_fqdn }}.txt
+  
+  - name: Finding the current month
+    action: shell date '+%m'
+    register: mymonth
+  
+  - name: Fetching the file from remote host(s)
+    fetch: src=/tmp/{{ ansible_fqdn }}.txt dest=/tmp/{{mymonth.stdout}}/ flat=yes 
