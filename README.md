@@ -10,3 +10,11 @@ A collection of ansible play books
 2. copy_a_dir: 
 ===============================
 - For copy a local directory to remote hosts.
+
+
+Commands: 
+===
+| For?                                 | Command                                      |
+|--------------------------------------|----------------------------------------------|
+| For creating a role directory Tree   | ansible-galaxy init <rolename>               |
+| For Downloading a role from galaxy   | ansible-galaxy install <username>:<rolename> |
